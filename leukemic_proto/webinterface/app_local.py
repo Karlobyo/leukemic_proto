@@ -15,7 +15,7 @@ import requests
 client = storage.Client()
 bucket = client.bucket('leukemic-1')
 
-model = tensorflow.keras.models.load_model('../models/new_cnn_simple')
+model = tensorflow.keras.models.load_model('leukemic_proto/models/new_cnn_simple')
 
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
