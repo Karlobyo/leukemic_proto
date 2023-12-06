@@ -7,9 +7,9 @@ from fastapi import FastAPI
 from google.cloud import storage
 import tensorflow
 import requests
-#from leukemic_det.ml_logic.data import load_test_img_prelim
-from leukemic_proto.params import *
-#from leukemic_det.api.fast import predict
+from leukemic_proto.ml_logic.data import load_test_img_prelim
+#from leukemic_proto.params import *
+#from leukemic_proto.api.fast import predict
 
 # Create a client object using the credentials file
 client = storage.Client()

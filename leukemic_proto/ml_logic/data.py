@@ -3,12 +3,12 @@ import numpy as np
 import pandas as pd
 import cv2 as cv
 from google.cloud import storage
-from leukemic_proto.params import *
+#from leukemic_proto.params import *
 from tqdm import tqdm
 
 # Set path to service account credentials file
 client = storage.Client()
-bucket = client.bucket(BUCKET_NAME)
+bucket = client.bucket("leukemic-1")
 
 # get the image paths from the GC bucket
 def get_path_image(folder):
