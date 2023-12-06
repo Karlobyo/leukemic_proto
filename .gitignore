@@ -1,0 +1,15 @@
+.env
+.env.yaml
+
+
+#system files
+.DS_Store
+.ipynb_checkpoints
+*.pyc
+*.swp
+build/
+dist/
+.coverage
+*.iml
+*.egg-info
+*.vscode
