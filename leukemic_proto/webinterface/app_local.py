@@ -8,7 +8,7 @@ from google.cloud import storage
 import tensorflow
 import requests
 #from leukemic_det.ml_logic.data import load_test_img_prelim
-#from leukemic_det.params import *
+from leukemic_proto.params import *
 #from leukemic_det.api.fast import predict
 
 # Create a client object using the credentials file
