@@ -1,4 +1,3 @@
-
 import cv2 as cv
 import streamlit as st
 import numpy as np
@@ -7,15 +6,17 @@ from fastapi import FastAPI
 from google.cloud import storage
 import tensorflow
 import requests
-from leukemic_proto.ml_logic.data import load_test_img_prelim
-#from leukemic_proto.params import *
-#from leukemic_proto.api.fast import predict
+from leukemic_proto.ml_logic.data import load_test_img_prelim, show_img_prelim
+from leukemic_proto.params import *
+from leukemic_proto.api.fast import predict
+
 
 # Create a client object using the credentials file
 client = storage.Client()
-bucket = client.bucket('leukemic-1')
+bucket = client.bucket(BUCKET_NAME)
 
 model = tensorflow.keras.models.load_model('../models/new_cnn_simple')
+
 
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
@@ -73,55 +74,14 @@ st.markdown('***')
 
 st.markdown('')
 
-def load_test_img_prelim(img_sample: int): # returns unlabelled images from GCS bucket leukemic-1
-
-    test_folder = bucket.blob("C-NMC_Leukemia/testing_data/C-NMC_test_prelim_phase_data")
-    test_image_paths = []
-    for blob in bucket.list_blobs(prefix=test_folder.name):
-        image_path = blob.name
-        test_image_paths.append(image_path)
-
-
-
-    blob = bucket.blob(test_image_paths[img_sample])
-    image_bytes = blob.download_as_bytes()
-    nparr = np.frombuffer(image_bytes, np.uint8)
-    test_img = cv.imdecode(nparr, cv.IMREAD_COLOR)
-
-
-    s = np.resize((test_img), (450, 450, 3))
-    resized_test_img = np.array(s)
-
-    return resized_test_img
-
-
-def show_img_prelim(img_sample : int):
-
-    test_folder = bucket.blob("C-NMC_Leukemia/testing_data/C-NMC_test_prelim_phase_data")
-    test_image_paths = []
-    for blob in bucket.list_blobs(prefix=test_folder.name):
-        image_path = blob.name
-        test_image_paths.append(image_path)
-
-    test_imgs =[]
-
-
-    blob = bucket.blob(test_image_paths[img_sample])
-    image_bytes = blob.download_as_bytes()
-    nparr = np.frombuffer(image_bytes, np.uint8)
-    test_img = cv.imdecode(nparr, cv.IMREAD_COLOR)
-    test_imgs.append(test_img)
-
-    return test_imgs
-
 
 # create multiselect widget for choosing an image
-
 st.markdown('Please select an image to be classified (1800 available):')
 
 img_number = [k for k in list(range(1, 1801))]
 selected_img_number = st.multiselect('', img_number)
 
+# func to classify demo images
 def predict(img_sample : int):
     """
     Make a single image prediction
@@ -139,15 +99,18 @@ def predict(img_sample : int):
 
     return y_pred
 
-
+# classifying demo images
 if selected_img_number:
     j = selected_img_number[-1]
     j=j-1
+
+    # show img selected by the user
     im = show_img_prelim(j)
     st.image(im, width=200, caption=f'Human white blood cell #{j+1}')
 
     # predict chosen image
 
+    ### with api
     # leukemic_api_url = 'http://127.0.0.1:8000/predict'
     # params = {'img_sample':selected_img_number[-1]}
     # response = requests.get(leukemic_api_url, params=params)
@@ -156,6 +119,8 @@ if selected_img_number:
 
     # predicted_class = prediction['The sample cell is']
 
+
+    ### without api
     predicted_class = predict(selected_img_number[-1])
 
     if predicted_class == 0:
@@ -164,7 +129,7 @@ if selected_img_number:
         st.write('Malignant')
 
 
-# image uploader
+# classifying images uploaded by the user
 st.markdown('')
 
 st.markdown('***')

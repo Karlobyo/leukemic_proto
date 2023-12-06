@@ -37,7 +37,6 @@ def load_and_preprocess_train_data(DATA_SIZE : int):
 
         img_data.extend(paths)
 
-
     data = {"img_data":img_data,
         "labels":[np.nan for x in range(len(img_data))]}
 
@@ -58,7 +57,6 @@ def load_and_preprocess_train_data(DATA_SIZE : int):
         image = cv.imdecode(nparr, cv.IMREAD_COLOR)
         img_list.append(image)
 
-
     X = np.array(img_list)
     y = np.array(data['labels'])
     y = y[:DATA_SIZE]
@@ -66,7 +64,7 @@ def load_and_preprocess_train_data(DATA_SIZE : int):
     return X, y
 
 def show_img_prelim(img_sample : int):
-
+    ''' func to display images on the app'''
     test_folder = bucket.blob("C-NMC_Leukemia/testing_data/C-NMC_test_prelim_phase_data")
     test_image_paths = []
     for blob in bucket.list_blobs(prefix=test_folder.name):
@@ -86,7 +84,7 @@ def show_img_prelim(img_sample : int):
 
 
 def load_test_img_prelim(img_sample: int): # returns unlabelled images from GCS bucket leukemic-1
-
+    ''' func to load images to be classified'''
     test_folder = bucket.blob("C-NMC_Leukemia/testing_data/C-NMC_test_prelim_phase_data")
     test_image_paths = []
     for blob in bucket.list_blobs(prefix=test_folder.name):
