@@ -16,7 +16,7 @@ app.add_middleware(
 )
 
 
-app.state.model = tensorflow.keras.models.load_model("/Users/carlobarbini/code/Karlobyo/leukemic_proto/leukemic_proto/models/new_cnn_simple")
+app.state.model = tensorflow.keras.models.load_model("/Users/carlobarbini/code/Karlobyo/leukemic_proto_project/leukemic_proto/models/new_cnn_simple")
 model = app.state.model
 
 @app.get("/")
@@ -28,7 +28,7 @@ def root():
 def predict(img_sample : int):
     """
     Make a single image prediction
-    Assumes `img_sample' is provided as an integer index by the userrrrr
+    Assumes `img_sample' is provided as an integer index by the user
     """
 
     im = show_img_prelim(img_sample)
@@ -48,24 +48,30 @@ def predict(img_sample : int):
         return {"The sample cell is":'Malignant'}
 
 
-@app.post("/classify")
-async def classify(image: UploadFile=File(...)):
 
-    file_bytes = np.asarray(bytearray(image.read()), dtype=np.uint8)
+@app.post("/classify")
+async def classify(image: UploadFile = File(...)):
+    # Read the image file asynchronously
+    contents = await image.read()
+
+    # Convert the contents to bytes
+    file_bytes = np.asarray(bytearray(contents), dtype=np.uint8)
+
+    # Decode the image
     image_u = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
 
-    # predict uploaded image
-
-    u = np.resize((image_u), (450, 450, 3))
+    # Resize the image
+    u = np.resize(image_u, (450, 450, 3))
     resized_u = np.array(u)
 
+    # Prepare the image for prediction
     X_pred = np.expand_dims(resized_u, 0)
-    y_pred = model.predict(np.array(X_pred))
+
+    y_pred = model.predict(X_pred)
 
     predicted_class_u = (y_pred > 0.5).astype(int)
 
-
     if predicted_class_u == 0:
-        return {"The sample cell is":'Healthy'}
+        return {"The sample cell is": 'Healthy'}
     else:
-        return {"The sample cell is":'Malignant'}
+        return {"The sample cell is": 'Malignant'}
