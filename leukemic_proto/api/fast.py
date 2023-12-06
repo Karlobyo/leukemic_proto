@@ -28,7 +28,7 @@ def root():
 def predict(img_sample : int):
     """
     Make a single image prediction
-    Assumes `img_sample' is provided as an integer index by the user
+    Assumes `img_sample' is provided as an integer index by the userrrrr
     """
 
     im = show_img_prelim(img_sample)
